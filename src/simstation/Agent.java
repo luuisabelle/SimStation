@@ -29,6 +29,7 @@ public abstract class Agent implements Runnable, Serializable {
     }
 
     public void start() {
+        myThread = new Thread(this);
         myThread.start();
     }
 
@@ -49,7 +50,7 @@ public abstract class Agent implements Runnable, Serializable {
     // in progress
     @Override
     public void run() {
-        myThread = Thread.currentThread();
+//        myThread = Thread.currentThread();
         onStart();
         while (!isStopped()) {
             try {

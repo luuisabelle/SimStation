@@ -1,6 +1,7 @@
 package simstation;
 
 import mvc.Model;
+import mvc.Utilities;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -12,6 +13,7 @@ public class World extends Model {
     private int clock = 0;
     private int alive = 0;
     private List<Agent> agents;
+    private boolean statsUpdaterAdded = false;
 
 
     public World() {
@@ -19,32 +21,55 @@ public class World extends Model {
     }
 
     public void addAgent(Agent a) {
+        // Set random initial position if not already set
+        if (a.getXc() == 0 && a.getYc() == 0) {
+            a.setXc(Utilities.rng.nextInt(SIZE));
+            a.setYc(Utilities.rng.nextInt(SIZE));
+        }
+
+        // Set world reference if the agent is a MobileAgent
+        if (a instanceof MobileAgent) {
+            ((MobileAgent) a).setWorld(this);
+        }
+
         agents.add(a);
     }
 
     public void startAgents() {
+        // Reset clock and stats when starting
+        clock = 0;
+        alive = agents.size();
+        // Add a stats updater agent if not already added
+        if (!statsUpdaterAdded) {
+            addAgent(new ObserverAgent(this));
+            statsUpdaterAdded = true;
+        }
         populate();
         for (Agent a : agents) {
             a.start();
         }
+        changed();
     }
 
     public void stopAgents() {
         for (Agent a : agents) {
             a.stop();
         }
+        changed();
     }
 
     public void pauseAgents() {
         for (Agent a : agents) {
             a.pause();
         }
+        changed();
     }
 
     public void resumeAgents() {
         for (Agent a : agents) {
             a.resume();
         }
+        changed();
     }
 
     public void populate() {

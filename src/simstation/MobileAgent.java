@@ -6,6 +6,14 @@ public abstract class MobileAgent extends Agent {
     private Heading heading;
     private World world;
 
+    public MobileAgent() {
+        super();
+        // Initialize with a random heading if not specified
+        this.heading = Heading.random();
+    }
+    public void setWorld(World world) {
+        this.world = world;
+    }
     public void move(int steps) {
         switch (heading) {
             case NORTH -> setYc(getYc() - steps);

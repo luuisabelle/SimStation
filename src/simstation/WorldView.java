@@ -7,7 +7,7 @@ import java.awt.*;
 
 public class WorldView extends View {
     private World world;
-    private static int AGENT_SIZE = 10;
+    private static int AGENT_SIZE = 2;
     public WorldView(Model model) {
         super(model);
         world = (World) model;
