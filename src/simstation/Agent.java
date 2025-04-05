@@ -11,6 +11,7 @@ public abstract class Agent implements Runnable, Serializable {
     private boolean stopped = false;
     private String agentName;
     transient protected Thread myThread;
+    protected World world;
 
     public int getXc() {
         return xc;
@@ -50,12 +51,12 @@ public abstract class Agent implements Runnable, Serializable {
     // in progress
     @Override
     public void run() {
-//        myThread = Thread.currentThread();
+        //myThread = Thread.currentThread();
         onStart();
         while (!isStopped()) {
             try {
                 update();
-                Thread.sleep(1000);
+                Thread.sleep(20);
                 checkPaused();
             } catch(InterruptedException e) {
                 onInterrupted();

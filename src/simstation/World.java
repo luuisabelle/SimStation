@@ -6,7 +6,6 @@ import mvc.Utilities;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Random;
 
 public class World extends Model {
     protected static int SIZE = 500;
@@ -20,7 +19,7 @@ public class World extends Model {
         agents = new ArrayList<>();
     }
 
-    public void addAgent(Agent a) {
+    public synchronized void addAgent(Agent a) {
         // Set random initial position if not already set
         if (a.getXc() == 0 && a.getYc() == 0) {
             a.setXc(Utilities.rng.nextInt(SIZE));
@@ -28,17 +27,17 @@ public class World extends Model {
         }
 
         // Set world reference if the agent is a MobileAgent
-        if (a instanceof MobileAgent) {
-            ((MobileAgent) a).setWorld(this);
-        }
+//        if (a instanceof MobileAgent) {
+//            ((MobileAgent) a).setWorld(this);
+//        }
 
         agents.add(a);
     }
 
-    public void startAgents() {
+    public synchronized void startAgents() {
         // Reset clock and stats when starting
-        clock = 0;
-        alive = agents.size();
+//        clock = 0;
+//        alive = agents.size();
         // Add a stats updater agent if not already added
         if (!statsUpdaterAdded) {
             addAgent(new ObserverAgent(this));
@@ -51,21 +50,21 @@ public class World extends Model {
         changed();
     }
 
-    public void stopAgents() {
+    public synchronized void stopAgents() {
         for (Agent a : agents) {
             a.stop();
         }
         changed();
     }
 
-    public void pauseAgents() {
+    public synchronized void pauseAgents() {
         for (Agent a : agents) {
             a.pause();
         }
         changed();
     }
 
-    public void resumeAgents() {
+    public synchronized void resumeAgents() {
         for (Agent a : agents) {
             a.resume();
         }
@@ -82,9 +81,15 @@ public class World extends Model {
                 "#clock: " + clock;
     }
 
-    public void updateStatistics() {
+    public synchronized void updateStatistics() {
         clock++;
-        alive++;
+        alive = 0;
+        for (Agent a : agents) {
+            if (!(a instanceof ObserverAgent)) {
+                alive++;
+            }
+        }
+        changed();
     }
 
     public Agent getNeighbor(Agent caller, int radius) {
@@ -97,10 +102,10 @@ public class World extends Model {
                 nearby.add(a);
             }
         }
-        return nearby.get(new Random().nextInt(nearby.size()));
+        return nearby.get(Utilities.rng.nextInt(nearby.size()));
     }
 
-    public List<Agent> getAgents() {
+    public synchronized List<Agent> getAgents() {
         return agents;
     }
 

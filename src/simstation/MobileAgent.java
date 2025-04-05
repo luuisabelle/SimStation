@@ -4,16 +4,16 @@ import mvc.Utilities;
 
 public abstract class MobileAgent extends Agent {
     private Heading heading;
-    private World world;
+    //private World world;
 
     public MobileAgent() {
         super();
         // Initialize with a random heading if not specified
         this.heading = Heading.random();
     }
-    public void setWorld(World world) {
-        this.world = world;
-    }
+//    public void setWorld(World world) {
+//        this.world = world;
+//    }
     public void move(int steps) {
         switch (heading) {
             case NORTH -> setYc(getYc() - steps);
@@ -21,7 +21,20 @@ public abstract class MobileAgent extends Agent {
             case WEST -> setXc(getXc() - steps);
             case SOUTH -> setYc(getYc() + steps);
         }
-        world.changed();
+        if (getXc() < 0) {
+            setXc(world.SIZE - getXc());
+        }
+        if (getXc() > world.SIZE) {
+            setXc(getXc() - world.SIZE);
+        }
+        if (getYc() < 0) {
+            setYc(world.SIZE - getYc());
+        }
+        if (getYc() > world.SIZE) {
+            setYc(getYc() - world.SIZE);
+        }
+        if (world != null) {
+        world.changed(); }
     }
 
     private void turn(Heading dir) {

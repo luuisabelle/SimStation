@@ -7,10 +7,15 @@ import java.awt.*;
 
 public class WorldView extends View {
     private World world;
-    private static int AGENT_SIZE = 2;
+    private static int AGENT_SIZE = 10;
     public WorldView(Model model) {
         super(model);
         world = (World) model;
+    }
+
+    @Override
+    public void update() {
+        repaint();
     }
 
     @Override
@@ -22,7 +27,9 @@ public class WorldView extends View {
     }
 
     public void drawAgent(Agent a, Graphics gc) {
-        gc.setColor(Color.RED);
-        gc.drawOval(a.getXc(), a.getYc(), AGENT_SIZE, AGENT_SIZE);
+        if (!(a instanceof ObserverAgent)) {
+            gc.setColor(Color.RED);
+            gc.fillOval(a.getXc(), a.getYc(), AGENT_SIZE, AGENT_SIZE);
+        }
     }
 }
