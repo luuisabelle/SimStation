@@ -25,12 +25,7 @@ public class World extends Model {
             a.setXc(Utilities.rng.nextInt(SIZE));
             a.setYc(Utilities.rng.nextInt(SIZE));
         }
-
-        // Set world reference if the agent is a MobileAgent
-//        if (a instanceof MobileAgent) {
-//            ((MobileAgent) a).setWorld(this);
-//        }
-
+        a.world = this;
         agents.add(a);
     }
 
@@ -76,7 +71,13 @@ public class World extends Model {
     }
 
     public String getStatus() {
-        return "#agents: " + agents.size() + "\n"+
+        int agentCount = 0;
+        for (Agent a : agents) {
+            if (!(a instanceof ObserverAgent)) {
+                agentCount++;
+            }
+        }
+        return "#agents: " + agentCount + "\n"+
                 "#living: " + alive + "\n" +
                 "#clock: " + clock;
     }

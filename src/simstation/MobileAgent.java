@@ -4,16 +4,21 @@ import mvc.Utilities;
 
 public abstract class MobileAgent extends Agent {
     private Heading heading;
-    //private World world;
 
     public MobileAgent() {
         super();
         // Initialize with a random heading if not specified
         this.heading = Heading.random();
     }
-//    public void setWorld(World world) {
-//        this.world = world;
-//    }
+
+// Add getter and setter for heading
+    public Heading getHeading() {
+        return heading;
+    }
+
+    public void setHeading(Heading heading) {
+        this.heading = heading;
+    }
     public void move(int steps) {
         switch (heading) {
             case NORTH -> setYc(getYc() - steps);
