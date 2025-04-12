@@ -25,7 +25,9 @@ public class PlagueSimulation extends World {
         lastInstance = this;
     }
 
-
+    public boolean isFatal() {
+        return isFatal;
+    }
     // Static method to get the last instance
     public static PlagueSimulation getLastInstance() {
         return lastInstance;
@@ -70,9 +72,19 @@ public class PlagueSimulation extends World {
 
     @Override
     public void populate() {
-        // Clear existing agents if any
+        // Clear existing agents
         getAgents().clear();
         infectedCount = 0;
+
+        System.out.println("PlagueSimulation.populate: Creating " + populationSize +
+                " agents with " + initialInfectedPercent + "% infected initially");
+        System.out.println("Virulence: " + VIRULENCE + "%, Recovery Time: " + recoveryTime +
+                ", Fatal: " + isFatal);
+
+        // Calculate exactly how many hosts should be infected based on percentage
+        int numInfected = (int)Math.ceil((populationSize * initialInfectedPercent) / 100.0);
+        System.out.println("Will infect " + numInfected + " out of " + populationSize + " agents");
+
         // Create a population of hosts
         for (int i = 0; i < populationSize; i++) {
             Host host = new Host();
@@ -81,10 +93,10 @@ public class PlagueSimulation extends World {
             host.setRecoveryTime(recoveryTime);
             host.setFatal(isFatal);
 
-            // Infect some percentage of hosts initially
-            if (i < populationSize * (initialInfectedPercent / 100.0)) {
+            // Infect the calculated number of hosts
+            if (i < numInfected) {
                 host.setInfected(true);
-                infectedCount++;
+                System.out.println("Agent " + i + " initially infected");
             }
 
             addAgent(host);
@@ -98,22 +110,32 @@ public class PlagueSimulation extends World {
         // Calculate infection percentage
         double infectedPercent = 0;
         int agentCount = 0;
+        int infectionCount = 0;
 
         for (Agent a : getAgents()) {
             if (!(a instanceof ObserverAgent)) {
                 agentCount++;
                 if (a instanceof Host && ((Host) a).isInfected()) {
-                    infectedCount++;
+                    infectionCount++;
                 }
             }
         }
 
         if (agentCount > 0) {
-            infectedPercent = (double) infectedCount / agentCount * 100;
+            infectedPercent = (double) infectionCount / agentCount * 100;
+        }
+
+        String parentStatus = super.getStatus();
+        String clockLine = "";
+        for (String line : parentStatus.split("\n")) {
+            if (line.contains("#clock:")) {
+                clockLine = line;
+                break;
+            }
         }
 
         return "#agents = " + agentCount + "\n" +
-                "clock = " + getClock() + "\n" +
+                clockLine + "\n" +
                 "% infected = " + String.format("%.1f", infectedPercent);
     }
 

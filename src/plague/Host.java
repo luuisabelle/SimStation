@@ -35,6 +35,7 @@ class Host extends MobileAgent {
         this.fatal = fatal;
     }
 
+
     @Override
     public void update() {
         // If the agent is dead (fatal infection and recovery time passed), don't move
@@ -57,15 +58,20 @@ class Host extends MobileAgent {
                     infected = false;
                     infectionTime = 0;
                 }
-                // If fatal, the agent remains infected but doesn't move (handled above)
             } else {
                 // Try to infect nearby hosts
                 Agent neighbor = world.getNeighbor(this, INFECTION_RADIUS);
-                if (neighbor instanceof Host && !((Host) neighbor).isInfected()) {
+                if (neighbor != null && neighbor instanceof Host && !((Host) neighbor).isInfected()) {
                     // Check if infection happens based on virulence
-                    if (Utilities.rng.nextInt(100) < PlagueSimulation.VIRULENCE) {
+                    int roll = Utilities.rng.nextInt(100);
+                    boolean infectionOccurs = roll < PlagueSimulation.VIRULENCE;
+
+                    if (infectionOccurs) {
                         // Check if host resists based on resistance
-                        if (Utilities.rng.nextInt(100) >= PlagueSimulation.RESISTANCE) {
+                        roll = Utilities.rng.nextInt(100);
+                        boolean resistanceSucceeds = roll < PlagueSimulation.RESISTANCE;
+
+                        if (!resistanceSucceeds) {
                             ((Host) neighbor).setInfected(true);
                         }
                     }
