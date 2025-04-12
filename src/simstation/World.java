@@ -105,6 +105,9 @@ public class World extends Model {
                 }
             }
         }
+        if (nearby.isEmpty()) {
+            return null;
+        }
         return nearby.get(Utilities.rng.nextInt(nearby.size()));
     }
 

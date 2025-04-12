@@ -27,13 +27,13 @@ public abstract class MobileAgent extends Agent {
             case SOUTH -> setYc(getYc() + steps);
         }
         if (getXc() < 0) {
-            setXc(world.SIZE - getXc());
+            setXc(getXc() + World.SIZE);
         }
         if (getXc() > world.SIZE) {
             setXc(getXc() - world.SIZE);
         }
         if (getYc() < 0) {
-            setYc(world.SIZE - getYc());
+            setYc(getYc() + World.SIZE);
         }
         if (getYc() > world.SIZE) {
             setYc(getYc() - world.SIZE);
