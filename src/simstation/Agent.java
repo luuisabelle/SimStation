@@ -53,6 +53,7 @@ public abstract class Agent implements Runnable, Serializable {
     @Override
     public void run() {
         //myThread = Thread.currentThread();
+        //checkPaused();
         onStart();
         while (!isStopped()) {
             try {
@@ -61,18 +62,19 @@ public abstract class Agent implements Runnable, Serializable {
                 checkPaused();
             } catch(InterruptedException e) {
                 onInterrupted();
+                Utilities.error(e);
             }
         }
         onExit();
     }
 
-    void onExit() {
+    synchronized void onExit() {
     }
 
-    void onStart() {
+    synchronized void onStart() {
     }
 
-    void onInterrupted() {
+    synchronized void onInterrupted() {
     }
 
     private boolean isStopped() {

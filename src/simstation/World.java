@@ -11,7 +11,7 @@ public class World extends Model {
     protected static int SIZE = 500;
     private int clock = 0;
     private int alive = 0;
-    private List<Agent> agents;
+    protected List<Agent> agents;
     private boolean statsUpdaterAdded = false;
 
 
@@ -95,12 +95,14 @@ public class World extends Model {
 
     public Agent getNeighbor(Agent caller, int radius) {
         List<Agent> nearby = new ArrayList<>();
-        for (Agent a : agents) { // will probably change implementation to match the professor's recommendation
-            int dx = a.getXc() - caller.getXc();
-            int dy = a.getYc() - caller.getYc();
-            double distance = Math.sqrt(dx*dx + dy*dy);
-            if (distance <= radius) {
-                nearby.add(a);
+        for (Agent a : agents) {
+            if (a != caller) { // will probably change implementation to match the professor's recommendation
+                int dx = a.getXc() - caller.getXc();
+                int dy = a.getYc() - caller.getYc();
+                double distance = Math.sqrt(dx * dx + dy * dy);
+                if (distance <= radius) {
+                    nearby.add(a);
+                }
             }
         }
         return nearby.get(Utilities.rng.nextInt(nearby.size()));
