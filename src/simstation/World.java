@@ -34,12 +34,6 @@ public class World extends Model {
     }
 
     public synchronized void startAgents() {
-        System.out.println("World.startAgents: Starting agents");
-
-        // Reset clock and stats
-        clock = 0;
-        alive = 0;
-
         // Stop any running agents
         stopAgents();
 

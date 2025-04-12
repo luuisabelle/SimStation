@@ -7,14 +7,10 @@ public class PlagueSimulation extends World {
     // Constants for the simulation
     public static int VIRULENCE = 50;    // % chance of infection
     public static int RESISTANCE = 2;    // % chance of resisting infection
-    private int initialInfectedPercent = 10; // Default initial infected percentage
-    private int populationSize = 50;     // Default population size
-    private int recoveryTime = 200;      // Default recovery time
-    private boolean isFatal = false;     // Whether infection is fatal
-    private int clock;
-
-    // Keep track of the last instance created for static access
-    private static PlagueSimulation lastInstance;
+    private int initialInfectedPercent;
+    private int populationSize;
+    private int recoveryTime;
+    private boolean isFatal = false;
 
     // Statistics variables
     private int infectedCount = 0;
@@ -22,18 +18,33 @@ public class PlagueSimulation extends World {
     // Constructor
     public PlagueSimulation() {
         super();
-        lastInstance = this;
+        Setting settings = Setting.getInstance();
+        this.populationSize = settings.getPopulationSize();
+        this.initialInfectedPercent = settings.getInitialInfectedPercent();
+        this.recoveryTime = settings.getRecoveryTime();
+        this.isFatal = settings.isFatal();
+        VIRULENCE = settings.getVirulence();
     }
 
     public boolean isFatal() {
         return isFatal;
     }
-    // Static method to get the last instance
-    public static PlagueSimulation getLastInstance() {
-        return lastInstance;
-    }
 
-    // Static method to handle infection attempts
+    @Override
+    public synchronized void startAgents() {
+        // First call the parent implementation
+        super.startAgents();
+        boolean hasObserver = false;
+        for (Agent a : getAgents()) {
+            if (a instanceof ObserverAgent) {
+                hasObserver = true;
+                break;
+            }
+        }
+        if (!hasObserver) {
+            addAgent(new ObserverAgent(this));
+        }
+    }
 
     // Getters and setters for parameters
     public void setInitialInfectedPercent(int percent) {
@@ -65,38 +76,39 @@ public class PlagueSimulation extends World {
         return isFatal;
     }
 
-    public int getClock() {
-        return clock;
-    }
-
-
     @Override
     public void populate() {
+        Agent observerAgent = null;
+        for (Agent a : getAgents()) {
+            if (a instanceof ObserverAgent) {
+                observerAgent = a;
+                break;
+            }
+        }
+
         // Clear existing agents
         getAgents().clear();
         infectedCount = 0;
 
-        System.out.println("PlagueSimulation.populate: Creating " + populationSize +
-                " agents with " + initialInfectedPercent + "% infected initially");
-        System.out.println("Virulence: " + VIRULENCE + "%, Recovery Time: " + recoveryTime +
-                ", Fatal: " + isFatal);
+        // Re-add the observer agent if it existed
+        if (observerAgent != null) {
+            addAgent(observerAgent);
+        }
+//        //Debug
+//        System.out.println("PlagueSimulation.populate: Creating " + populationSize +
+//                " agents with " + initialInfectedPercent + "% infected initially");
+//        System.out.println("Virulence: " + VIRULENCE + "%, Recovery Time: " + recoveryTime +
+//                ", Fatal: " + isFatal);
 
         // Calculate exactly how many hosts should be infected based on percentage
         int numInfected = (int)Math.ceil((populationSize * initialInfectedPercent) / 100.0);
-        System.out.println("Will infect " + numInfected + " out of " + populationSize + " agents");
-
         // Create a population of hosts
         for (int i = 0; i < populationSize; i++) {
             Host host = new Host();
-
-            // Set recovery parameters
             host.setRecoveryTime(recoveryTime);
             host.setFatal(isFatal);
-
-            // Infect the calculated number of hosts
             if (i < numInfected) {
                 host.setInfected(true);
-                System.out.println("Agent " + i + " initially infected");
             }
 
             addAgent(host);
@@ -106,8 +118,6 @@ public class PlagueSimulation extends World {
     @Override
     public String getStatus() {
         updateInfectedCount();
-
-        // Calculate infection percentage
         double infectedPercent = 0;
         int agentCount = 0;
         int infectionCount = 0;

@@ -148,75 +148,83 @@ public class PlaguePanel extends WorldPanel {
         return panel;
     }
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        // Check if this is the Start button
-        if (e.getActionCommand().equals("Start")) {
-            // Apply current settings from sliders to the model before starting
-            applyCurrentSettings();
-        }
-
-        // Call the parent implementation to handle the actual command
-        super.actionPerformed(e);
-    }
-
-    // Update methods for sliders - use the static PlagueFactory methods
     private void updateInitialInfected() {
         int value = initialInfectedSlider.getValue();
         initialInfectedValue.setText(String.valueOf(value));
 
-        // Update using factory method
-        PlagueFactory.setInitialInfectedPercent(value);
+        // Update using settings class
+        Setting.getInstance().setInitialInfectedPercent(value);
     }
 
     private void updateInfectionProbability() {
         int value = infectionProbabilitySlider.getValue();
         infectionProbabilityValue.setText(String.valueOf(value));
 
-        // Update using factory method
-        PlagueFactory.setVirulence(value);
+        // Update using settings class
+        Setting.getInstance().setVirulence(value);
+        // Also update the static field for immediate effect
+        PlagueSimulation.VIRULENCE = value;
     }
 
     private void updatePopulationSize() {
         int value = populationSizeSlider.getValue();
         populationSizeValue.setText(String.valueOf(value));
 
-        // Update using factory method
-        PlagueFactory.setPopulationSize(value);
+        // Update using settings class
+        Setting.getInstance().setPopulationSize(value);
     }
 
     private void updateRecoveryTime() {
         int value = recoveryTimeSlider.getValue();
         recoveryTimeValue.setText(String.valueOf(value));
 
-        // Update using factory method
-        PlagueFactory.setRecoveryTime(value);
+        // Update using settings class
+        Setting.getInstance().setRecoveryTime(value);
     }
 
     private void toggleFatality() {
-        // Toggle the factory's fatality setting
-        PlagueFactory.setFatal(!PlagueFactory.isFatal());
+        // Toggle using settings class
+        boolean current = Setting.getInstance().isFatal();
+        Setting.getInstance().setFatal(!current);
 
-        // Update the button text
-        fatalityButton.setText(PlagueFactory.isFatal() ? "Fatal" : "Not Fatal");
+        // Update button text
+        fatalityButton.setText(!current ? "Fatal" : "Not Fatal");
+    }
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        // Check if this is the Start button
+        if (e.getActionCommand().equals("Start")) {
+            applyCurrentSettings();
+            PlagueSimulation currentModel = PlagueFactory.getCurrentModel();
+            if (currentModel != null) {
+                Setting settings = Setting.getInstance();
+                currentModel.setPopulationSize(settings.getPopulationSize());
+                currentModel.setInitialInfectedPercent(settings.getInitialInfectedPercent());
+                currentModel.setRecoveryTime(settings.getRecoveryTime());
+                PlagueSimulation.VIRULENCE = settings.getVirulence();
+
+                // Also check the fatality setting
+                if (settings.isFatal() != currentModel.isFatal()) {
+                    currentModel.toggleFatality();
+                }
+            }
+        }
+
+        // Call the parent implementation to handle the actual command
+        super.actionPerformed(e);
     }
 
-    // Method to apply current settings before starting the simulation
     private void applyCurrentSettings() {
-        System.out.println("Applying settings from UI: " +
-                "Population=" + populationSizeSlider.getValue() +
-                ", InitialInfected=" + initialInfectedSlider.getValue() +
-                ", Virulence=" + infectionProbabilitySlider.getValue() +
-                ", RecoveryTime=" + recoveryTimeSlider.getValue());
-
-        // Update all factory settings
-        PlagueFactory.setPopulationSize(populationSizeSlider.getValue());
-        PlagueFactory.setInitialInfectedPercent(initialInfectedSlider.getValue());
-        PlagueFactory.setVirulence(infectionProbabilitySlider.getValue());
-        PlagueFactory.setRecoveryTime(recoveryTimeSlider.getValue());
+        int infectedPercent = initialInfectedSlider.getValue();
+        int virulence = infectionProbabilitySlider.getValue();
+        int population = populationSizeSlider.getValue();
+        int recovery = recoveryTimeSlider.getValue();
+        Setting.getInstance().setPopulationSize(population);
+        Setting.getInstance().setInitialInfectedPercent(infectedPercent);
+        Setting.getInstance().setVirulence(virulence);
+        Setting.getInstance().setRecoveryTime(recovery);
+        PlagueSimulation.VIRULENCE = virulence;
     }
-
-    // Update the setModel method to initialize sliders from factory settings
     @Override
     public void setModel(Model m) {
         // Call super implementation first
@@ -226,22 +234,24 @@ public class PlaguePanel extends WorldPanel {
         if (m instanceof PlagueSimulation) {
             this.plagueSimulation = (PlagueSimulation)m;
 
-            // Initialize sliders with current factory values
+            // Initialize sliders with current settings values
             if (initialInfectedSlider != null) {
-                initialInfectedSlider.setValue(PlagueFactory.getInitialInfectedPercent());
-                initialInfectedValue.setText(String.valueOf(PlagueFactory.getInitialInfectedPercent()));
+                Setting settings = Setting.getInstance();
 
-                infectionProbabilitySlider.setValue(PlagueFactory.getVirulence());
-                infectionProbabilityValue.setText(String.valueOf(PlagueFactory.getVirulence()));
+                initialInfectedSlider.setValue(settings.getInitialInfectedPercent());
+                initialInfectedValue.setText(String.valueOf(settings.getInitialInfectedPercent()));
 
-                populationSizeSlider.setValue(PlagueFactory.getPopulationSize());
-                populationSizeValue.setText(String.valueOf(PlagueFactory.getPopulationSize()));
+                infectionProbabilitySlider.setValue(settings.getVirulence());
+                infectionProbabilityValue.setText(String.valueOf(settings.getVirulence()));
 
-                recoveryTimeSlider.setValue(PlagueFactory.getRecoveryTime());
-                recoveryTimeValue.setText(String.valueOf(PlagueFactory.getRecoveryTime()));
+                populationSizeSlider.setValue(settings.getPopulationSize());
+                populationSizeValue.setText(String.valueOf(settings.getPopulationSize()));
+
+                recoveryTimeSlider.setValue(settings.getRecoveryTime());
+                recoveryTimeValue.setText(String.valueOf(settings.getRecoveryTime()));
 
                 // Update button text
-                fatalityButton.setText(PlagueFactory.isFatal() ? "Fatal" : "Not Fatal");
+                fatalityButton.setText(settings.isFatal() ? "Fatal" : "Not Fatal");
             }
 
             System.out.println("PlaguePanel.setModel: Model set to " + m);
