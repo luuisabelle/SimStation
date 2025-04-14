@@ -1,12 +1,15 @@
 package prisonersDilemma;
 
+import mvc.Utilities;
 import simstation.Agent;
+import simstation.MobileAgent;
 
-public class Prisoner extends Agent {
+public class Prisoner extends MobileAgent {
     private int fitness = 0;
     private boolean cheated = false;
     private boolean partnerCheated = false;
     private Strategy strategy;
+    private static final int PARTNER_RADIUS = 20;
 
     public Prisoner(Strategy strategy) {
         super();
@@ -16,7 +19,9 @@ public class Prisoner extends Agent {
 
     @Override
     public void update() {
-        Prisoner partner = (Prisoner) world.getNeighbor(this, 25);
+        move(5);
+        turn(heading);
+        Prisoner partner = (Prisoner) world.getNeighbor(this, PARTNER_RADIUS);
         if (partner != null) {
             boolean thisCooperate = this.cooperate();
             boolean partnerCooperate = partner.cooperate();

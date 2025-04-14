@@ -96,7 +96,7 @@ public class World extends Model {
     public Agent getNeighbor(Agent caller, int radius) {
         List<Agent> nearby = new ArrayList<>();
         for (Agent a : agents) {
-            if (a != caller) { // will probably change implementation to match the professor's recommendation
+            if (a != caller && (a instanceof MobileAgent)) { // will probably change implementation to match the professor's recommendation
                 int dx = a.getXc() - caller.getXc();
                 int dy = a.getYc() - caller.getYc();
                 double distance = Math.sqrt(dx * dx + dy * dy);

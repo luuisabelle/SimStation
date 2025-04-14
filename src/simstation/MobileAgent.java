@@ -3,7 +3,7 @@ package simstation;
 import mvc.Utilities;
 
 public abstract class MobileAgent extends Agent {
-    private Heading heading;
+    protected Heading heading;
 
     public MobileAgent() {
         super();
@@ -42,7 +42,7 @@ public abstract class MobileAgent extends Agent {
         world.changed(); }
     }
 
-    private void turn(Heading dir) {
+    protected void turn(Heading dir) {
         this.heading = dir;
     }
 
