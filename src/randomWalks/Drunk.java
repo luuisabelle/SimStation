@@ -10,7 +10,7 @@ class Drunk extends MobileAgent {
     }
 
     public void update() {
-        Heading heading = Heading.random();
+        setHeading(Heading.random());
         int steps = Utilities.rng.nextInt(20) + 1;
         move(steps);
     }

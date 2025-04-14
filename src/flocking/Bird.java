@@ -30,7 +30,7 @@ public class Bird extends MobileAgent {
 
             // Copy the speed and heading of the neighbor
             this.setSpeed(neighbor.getSpeed());
-            this.setHeading(neighbor.getHeading());
+            this.turn(neighbor.getHeading());
         }
 
         // Move with steps = speed

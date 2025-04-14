@@ -11,16 +11,12 @@ public class World extends Model {
     protected static int SIZE = 500;
     private int clock = 0;
     private int alive = 0;
-    private List<Agent> agents;
+    protected List<Agent> agents;
     private boolean statsUpdaterAdded = false;
 
 
     public World() {
         agents = new ArrayList<>();
-    }
-
-    public int getClock() {
-        return clock;
     }
 
     public synchronized void addAgent(Agent a) {
@@ -34,30 +30,20 @@ public class World extends Model {
     }
 
     public synchronized void startAgents() {
-        // Stop any running agents
-        stopAgents();
-
-        // Clear existing agents
-        agents.clear();
-
-        // Add the stats updater if needed
+        // Reset clock and stats when starting
+//        clock = 0;
+//        alive = agents.size();
+        // Add a stats updater agent if not already added
         if (!statsUpdaterAdded) {
             addAgent(new ObserverAgent(this));
             statsUpdaterAdded = true;
         }
-
-        // Call populate to create fresh agents
         populate();
-
-        // Start all agents
         for (Agent a : agents) {
             a.start();
         }
-
-        // Notify view
         changed();
     }
-
 
     public synchronized void stopAgents() {
         for (Agent a : agents) {
@@ -109,8 +95,8 @@ public class World extends Model {
 
     public Agent getNeighbor(Agent caller, int radius) {
         List<Agent> nearby = new ArrayList<>();
-        for (Agent a : agents) { // will probably change implementation to match the professor's recommendation
-            if (a != caller) {
+        for (Agent a : agents) {
+            if (a != caller && (a instanceof MobileAgent)) { // will probably change implementation to match the professor's recommendation
                 int dx = a.getXc() - caller.getXc();
                 int dy = a.getYc() - caller.getYc();
                 double distance = Math.sqrt(dx * dx + dy * dy);
@@ -119,9 +105,8 @@ public class World extends Model {
                 }
             }
         }
-        // Check if any neighbors were found
         if (nearby.isEmpty()) {
-            return null; // Return null if no neighbors are found
+            return null;
         }
         return nearby.get(Utilities.rng.nextInt(nearby.size()));
     }
