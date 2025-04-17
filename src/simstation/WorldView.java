@@ -32,4 +32,10 @@ public class WorldView extends View {
             gc.fillOval(a.getXc(), a.getYc(), AGENT_SIZE, AGENT_SIZE);
         }
     }
+
+    @Override
+    public void setModel(Model model) {
+        super.setModel(model);
+        world = (World) model;
+    }
 }

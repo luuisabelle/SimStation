@@ -7,14 +7,6 @@ import simstation.WorldPanel;
 
 public class Prison extends World {
     private static int AGENTS_PER_STRATEGY = 10;
-    private int cheatFitness = 0;
-    private int cooperateFitness = 0;
-    private int randomlyCooperateFitness = 0;
-    private int tit4TatFitness = 0;
-    private int cheatCount = 0;
-    private int cooperateCount = 0;
-    private int randomlyCooperateCount = 0;
-    private int tit4TatCount = 0;
 
     @Override
     public void populate() {
@@ -34,14 +26,14 @@ public class Prison extends World {
 
     @Override
     public String getStatus() {
-        cheatFitness = 0;
-        cheatCount = 0;
-        cooperateFitness = 0;
-        cooperateCount = 0;
-        randomlyCooperateFitness = 0;
-        randomlyCooperateCount = 0;
-        tit4TatFitness = 0;
-        tit4TatCount = 0;
+        int cheatFitness = 0;
+        int cheatCount = 0;
+        int cooperateFitness = 0;
+        int cooperateCount = 0;
+        int randomlyCooperateFitness = 0;
+        int randomlyCooperateCount = 0;
+        int tit4TatFitness = 0;
+        int tit4TatCount = 0;
         for (Agent a : agents) {
             if (a instanceof Prisoner prisoner) {
                 if (prisoner.getStrategy() instanceof Cheat) {
@@ -60,10 +52,10 @@ public class Prison extends World {
             }
         }
         return "Average Strategy Fitness" + "\n" +
-                "Cheat: " + cheatFitness/cheatCount + "\n" +
-                "Cooperate: " + cooperateFitness/cooperateCount + "\n" +
-                "Randomly Cooperate: " + randomlyCooperateFitness/randomlyCooperateCount + "\n" +
-                "Tit 4 Tat: " + tit4TatFitness/tit4TatCount;
+                "Cheat: " + cheatFitness / cheatCount + "\n" +
+                "Cooperate: " + cooperateFitness / cooperateCount + "\n" +
+                "Randomly Cooperate: " + randomlyCooperateFitness / randomlyCooperateCount + "\n" +
+                "Tit 4 Tat: " + tit4TatFitness / tit4TatCount;
     }
 
     public static void main(String[] args) {

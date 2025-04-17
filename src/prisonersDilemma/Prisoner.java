@@ -19,7 +19,7 @@ public class Prisoner extends MobileAgent {
 
     @Override
     public void update() {
-        move(2);
+        move(Utilities.rng.nextInt(20));
         turn(Heading.random());
         Prisoner partner = (Prisoner) world.getNeighbor(this, PARTNER_RADIUS);
         if (partner != null) {

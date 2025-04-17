@@ -85,6 +85,7 @@ public class Utilities {
         String fName = model.getFileName();
         if (fName == null || saveAs) {
             fName = getFileName(fName, false);
+            if (fName == null) return;
             model.setFileName(fName);
         }
         try {
@@ -103,6 +104,7 @@ public class Utilities {
         saveChanges(model);
         String fName = getFileName(model.getFileName(), true);
         Model newModel = null;
+        if (fName == null) return null;
         try {
             ObjectInputStream is = new ObjectInputStream(new FileInputStream(fName));
             newModel = (Model)is.readObject();
