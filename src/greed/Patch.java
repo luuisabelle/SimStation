@@ -4,7 +4,7 @@ import simstation.Agent;
 
 public class Patch extends Agent {
     public int energy = 100;
-    public int growBackRate = 1;
+    public static int growBackRate = 1;
     public boolean beingGrazed = false;
 
     public Patch() {

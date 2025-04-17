@@ -4,7 +4,7 @@ import simstation.MobileAgent;
 
 public class Cow extends MobileAgent {
     int energy = 100;
-
+    static int greediness = 25;
 
     public boolean died = false;
     @Override

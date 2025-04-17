@@ -6,10 +6,10 @@ import simstation.World;
 public class Meadow extends World {
 
     int waitPenalty = 5;
-    int moveEnergy = 5;
+    int moveEnergy = 10;
     int numCows = 50;
 
-    int greediness = 25;
+    //int greediness = 25;
     int patchSize = 20;
     int dim = SIZE / patchSize; // dim is how many patches per row
 
@@ -108,10 +108,14 @@ public class Meadow extends World {
     }
 
     public void setGreediness(int greediness) {
-        this.greediness = greediness;
+        Cow.greediness = greediness;
     }
 
+    public void setGrowBackRate(int growBackRate) { Patch.growBackRate = growBackRate; }
+
+    public void setMoveEnergy(int moveEnergy) { this.moveEnergy = moveEnergy; }
+
     public int getGreediness() {
-        return greediness;
+        return Cow.greediness;
     }
 }

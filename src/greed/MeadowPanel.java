@@ -9,9 +9,13 @@ import java.util.Hashtable;
 public class MeadowPanel extends WorldPanel {
     // Sliders for various simulation parameters
     private JSlider greedinessSlider;
+    private JSlider growBackSlider;
+    private JSlider moveEnergySlider;
 
     // Value labels displayed above sliders
     private JLabel greedinessLabel;
+    private JLabel growBackLabel;
+    private JLabel moveEnergyLabel;
 
     // Reference to the simulation
     private Meadow meadow;
@@ -31,10 +35,13 @@ public class MeadowPanel extends WorldPanel {
 
         // Create slider panels
         JPanel greedinessPanel = createLabeledSlider("Greediness:", 0, 100, 10, 10);
-
+        JPanel growBackPanel = createLabeledSlider("Grow Back Rate:", 0, 10, 1, 2);
+        JPanel moveEnergyPanel = createLabeledSlider("Move Energy:", 0, 50, 10, 10);
 
         // Add slider panels to the main panel
         sliderPanel.add(greedinessPanel);
+        sliderPanel.add(growBackPanel);
+        sliderPanel.add(moveEnergyPanel);
         sliderPanel.add(Box.createVerticalStrut(10));
 
         // Add the slider panel to the south position of the control panel
@@ -101,6 +108,18 @@ public class MeadowPanel extends WorldPanel {
             slider.addChangeListener(e -> updateInitialInfected());
         }
 
+        else if (labelText.contains("Grow Back Rate")) {
+            growBackSlider = slider;
+            growBackLabel = valueLabel;
+            slider.addChangeListener(e -> updateGrowBackRate());
+        }
+
+        else if (labelText.contains("Move Energy")) {
+            moveEnergySlider = slider;
+            moveEnergyLabel = valueLabel;
+            slider.addChangeListener(e -> updateMoveEnergy());
+        }
+
         // Add slider to panel
         panel.add(slider);
 
@@ -121,6 +140,22 @@ public class MeadowPanel extends WorldPanel {
         greedinessLabel.setText(String.valueOf(value));
         if (meadow != null) {
             meadow.setGreediness(value);
+        }
+    }
+
+    private void updateGrowBackRate() {
+        int value = growBackSlider.getValue();
+        growBackLabel.setText(String.valueOf(value));
+        if (meadow != null) {
+            meadow.setGrowBackRate(value);
+        }
+    }
+
+    private void updateMoveEnergy() {
+        int value = moveEnergySlider.getValue();
+        moveEnergyLabel.setText(String.valueOf(value));
+        if (meadow != null) {
+            meadow.setMoveEnergy(value);
         }
     }
 
