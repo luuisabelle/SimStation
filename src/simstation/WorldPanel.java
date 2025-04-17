@@ -75,7 +75,5 @@ public class WorldPanel extends AppPanel {
         WorldPanel panel = new WorldPanel(factory);
         panel.display();
     }
-
-
 }
 

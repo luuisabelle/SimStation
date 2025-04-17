@@ -1,7 +1,6 @@
 package prisonersDilemma;
 
 import mvc.Utilities;
-import simstation.Agent;
 import simstation.MobileAgent;
 
 public class Prisoner extends MobileAgent {

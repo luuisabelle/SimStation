@@ -28,20 +28,18 @@ public abstract class MobileAgent extends Agent {
         }
         if (getXc() < 0) {
             setXc(getXc() + World.SIZE);
-            setXc(getXc() + world.SIZE);
         }
-        if (getXc() >= world.SIZE) {
-            setXc(getXc() % world.SIZE);
+        if (getXc() > world.SIZE) {
+            setXc(getXc() - world.SIZE);
         }
         if (getYc() < 0) {
             setYc(getYc() + World.SIZE);
-            setYc(getYc() + world.SIZE);
         }
-        if (getYc() >= world.SIZE) {
-            setYc(getYc() % world.SIZE);
+        if (getYc() > world.SIZE) {
+            setYc(getYc() - world.SIZE);
         }
         if (world != null) {
-        world.changed(); }
+            world.changed(); }
     }
 
     protected void turn(Heading dir) {
