@@ -30,10 +30,8 @@ public class World extends Model {
     }
 
     public synchronized void startAgents() {
-        // Reset clock and stats when starting
-//        clock = 0;
-//        alive = agents.size();
-        // Add a stats updater agent if not already added
+    //Clear the old agents then start the new one
+        agents.clear();
         if (!statsUpdaterAdded) {
             addAgent(new ObserverAgent(this));
             statsUpdaterAdded = true;

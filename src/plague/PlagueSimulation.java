@@ -2,6 +2,8 @@ package plague;
 
 import simstation.*;
 import mvc.Utilities;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PlagueSimulation extends World {
     // Constants for the simulation
@@ -44,6 +46,74 @@ public class PlagueSimulation extends World {
         if (!hasObserver) {
             addAgent(new ObserverAgent(this));
         }
+    }
+
+    public void applyImmediateVirulenceEffect(int virulence) {
+        // Get all healthy hosts
+        List<Host> healthyHosts = new ArrayList<>();
+        for (Agent agent : getAgents()) {
+            if (agent instanceof Host && !((Host) agent).isInfected()) {
+                healthyHosts.add((Host) agent);
+            }
+        }
+
+        // Skip if no healthy hosts
+        if (healthyHosts.isEmpty()) {
+            return;
+        }
+
+        double infectionRate = virulence / 500.0;
+        int hostsToInfect = (int)Math.ceil(healthyHosts.size() * infectionRate);
+
+        // Don't exceed the number of healthy hosts
+        hostsToInfect = Math.min(hostsToInfect, healthyHosts.size());
+
+        // Infect random healthy hosts
+        for (int i = 0; i < hostsToInfect; i++) {
+            // Exit if no more healthy hosts
+            if (healthyHosts.isEmpty()) {
+                break;
+            }
+
+            // Select a random healthy host
+            int randomIndex = Utilities.rng.nextInt(healthyHosts.size());
+            Host hostToInfect = healthyHosts.get(randomIndex);
+
+            // Infect the host
+            hostToInfect.setInfected(true);
+
+            // Remove from the list to avoid infecting the same host twice
+            healthyHosts.remove(randomIndex);
+        }
+        changed();
+    }
+
+    public void updateHostsRecoveryTime(int time) {
+        // Store the new value
+        this.recoveryTime = time;
+
+        // Update all hosts
+        for (Agent agent : getAgents()) {
+            if (agent instanceof Host) {
+                ((Host) agent).setRecoveryTime(time);
+            }
+        }
+
+        // Notify observers that the model has changed
+        changed();
+    }
+
+    public void updateHostsFatality(boolean fatal) {
+        // Store the new value
+        this.isFatal = fatal;
+
+        // Update all hosts
+        for (Agent agent : getAgents()) {
+            if (agent instanceof Host) {
+                ((Host) agent).setFatal(fatal);
+            }
+        }
+        changed();
     }
 
     // Getters and setters for parameters
@@ -94,11 +164,6 @@ public class PlagueSimulation extends World {
         if (observerAgent != null) {
             addAgent(observerAgent);
         }
-//        //Debug
-//        System.out.println("PlagueSimulation.populate: Creating " + populationSize +
-//                " agents with " + initialInfectedPercent + "% infected initially");
-//        System.out.println("Virulence: " + VIRULENCE + "%, Recovery Time: " + recoveryTime +
-//                ", Fatal: " + isFatal);
 
         // Calculate exactly how many hosts should be infected based on percentage
         int numInfected = (int)Math.ceil((populationSize * initialInfectedPercent) / 100.0);

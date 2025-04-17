@@ -12,7 +12,11 @@ public abstract class Agent implements Runnable, Serializable {
     private String agentName;
     transient protected Thread myThread;
     protected World world;
+    private int SIZE = 10;
 
+    public int getAgentSize(){
+        return SIZE;
+    }
     public int getXc() {
         return xc;
     }

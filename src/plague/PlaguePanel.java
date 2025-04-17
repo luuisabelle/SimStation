@@ -160,10 +160,14 @@ public class PlaguePanel extends WorldPanel {
         int value = infectionProbabilitySlider.getValue();
         infectionProbabilityValue.setText(String.valueOf(value));
 
-        // Update using settings class
+        // Update settings and static field
         Setting.getInstance().setVirulence(value);
-        // Also update the static field for immediate effect
         PlagueSimulation.VIRULENCE = value;
+
+        // Apply immediate effect if there is a running simulation
+        if (plagueSimulation != null) {
+            plagueSimulation.applyImmediateVirulenceEffect(value);
+        }
     }
 
     private void updatePopulationSize() {
@@ -180,16 +184,30 @@ public class PlaguePanel extends WorldPanel {
 
         // Update using settings class
         Setting.getInstance().setRecoveryTime(value);
+
+        // Apply to currently active simulation if it exists
+        if (plagueSimulation != null) {
+            // Update all existing hosts with the new recovery time
+            plagueSimulation.updateHostsRecoveryTime(value);
+        }
     }
 
     private void toggleFatality() {
         // Toggle using settings class
         boolean current = Setting.getInstance().isFatal();
-        Setting.getInstance().setFatal(!current);
+        boolean newValue = !current;
+        Setting.getInstance().setFatal(newValue);
 
         // Update button text
-        fatalityButton.setText(!current ? "Fatal" : "Not Fatal");
+        fatalityButton.setText(newValue ? "Fatal" : "Not Fatal");
+
+        // Apply to currently active simulation if it exists
+        if (plagueSimulation != null) {
+            // Update all existing hosts with the new fatality setting
+            plagueSimulation.updateHostsFatality(newValue);
+        }
     }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         // Check if this is the Start button
@@ -225,6 +243,7 @@ public class PlaguePanel extends WorldPanel {
         Setting.getInstance().setRecoveryTime(recovery);
         PlagueSimulation.VIRULENCE = virulence;
     }
+
     @Override
     public void setModel(Model m) {
         // Call super implementation first
@@ -253,8 +272,6 @@ public class PlaguePanel extends WorldPanel {
                 // Update button text
                 fatalityButton.setText(settings.isFatal() ? "Fatal" : "Not Fatal");
             }
-
-            System.out.println("PlaguePanel.setModel: Model set to " + m);
         }
     }
 
