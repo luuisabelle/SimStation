@@ -277,6 +277,8 @@ public class PlaguePanel extends WorldPanel {
 
     // Main method to run the application
     public static void main(String[] args) {
+        FRAME_WIDTH = 1000;
+        FRAME_HEIGHT = 570;
         PlagueFactory factory = new PlagueFactory();
         PlaguePanel panel = new PlaguePanel(factory);
         panel.display();

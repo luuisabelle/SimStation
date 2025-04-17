@@ -125,6 +125,8 @@ public class MeadowPanel extends WorldPanel {
     }
 
     public static void main(String[] args) {
+        FRAME_WIDTH = 1000;
+        FRAME_HEIGHT = 570;
         MeadowPanel panel = new MeadowPanel(new GreedFactory());
         panel.display();
     }
